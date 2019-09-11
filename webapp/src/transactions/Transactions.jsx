@@ -1,33 +1,20 @@
 import * as React from 'react'
-import { Query,
-  Mutation
-} from 'react-apollo'
-import gql from 'graphql-tag'
+import { useMutation } from '@apollo/react-hooks'
 import { css } from '@emotion/core'
-import { Button } from '../utitlites/BaseStyles'
+import { Button } from '../utilities/BaseStyles'
+import { REMOVE_TRANSACTION, TRANSACTIONS_QUERY } from '../utilities/queries'
 
-const Transactions = () => {
+const Transactions = (transactions) => {
   return (
     <>
-      <Query query={TRANSACTIONS_QUERY}>
-        {({ loading, error, data }) => {
-          if (loading) return <h2>Loading.. Please wait</h2>
-          if (error) return <h5>There was an Error..</h5>
+      {transactions.transactions.map(transaction => <TransactionCard key={`Transaction_${transaction.id}`} transaction={transaction} />)}
 
-          const transactionsToRender = data.transactions
-
-          return (
-            <div>
-              {transactionsToRender.map(transaction => <TransactionCard key={`Transaction_${transaction.id}`} transaction={transaction} />)}
-            </div>
-          )
-        }}
-      </Query>
     </>
   )
 }
 
 const TransactionCard = (transaction) => {
+  const [removeTransaction] = useMutation(REMOVE_TRANSACTION)
   const { id, amount, credit, description } = transaction.transaction
 
   return (
@@ -45,19 +32,15 @@ const TransactionCard = (transaction) => {
         {description}
       </div>
       <div>
-        <Mutation mutation={REMOVE_TRANSACTION}>
-          {(removeTransaction) => (
-            <Button delete onClick={() =>
-              removeTransaction({
-                variables: {
-                  id: id
-                },
-                refetchQueries: [{
-                  query: TRANSACTIONS_QUERY
-                }]
-              })}>Delete</Button>
-          )}
-        </Mutation>
+        <Button delete onClick={() =>
+          removeTransaction({
+            variables: {
+              id: id
+            },
+            refetchQueries: [{
+              query: TRANSACTIONS_QUERY
+            }]
+          })}>Delete</Button>
       </div>
     </div>
   )
@@ -84,30 +67,6 @@ const TransactionCardLabel = css`
   color: #b5b5b5;
   font-size: 10px; 
   padding-bottom: 4px;
-`
-
-export const TRANSACTIONS_QUERY = gql`
-  {
-    transactions {
-      id
-      amount
-      credit
-      debit
-      description
-    }
-  }
-`
-
-const REMOVE_TRANSACTION = gql`
-  mutation RemoveTransaction(
-    $id: String!
-  ) {
-    removeTransaction(
-      id: $id
-    ) {
-      id
-    }
-  }
 `
 
 export default Transactions

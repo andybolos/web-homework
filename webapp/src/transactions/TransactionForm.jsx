@@ -1,37 +1,46 @@
 import * as React from 'react'
-import {
-  Mutation
-} from 'react-apollo'
-import gql from 'graphql-tag'
+import { useMutation } from '@apollo/react-hooks'
 import { css } from '@emotion/core'
 import { Link } from 'react-router-dom'
-import { Button } from '../utitlites/BaseStyles'
-import { TRANSACTIONS_QUERY } from './Transactions'
+import { Button } from '../utilities/BaseStyles'
+import { ADD_TRANSACTION, TRANSACTIONS_QUERY } from '../utilities/queries'
 
 const TransactionForm = () => {
-  const [formValues, setFormValues] = React.useState({})
+  const initialFormState = {
+    amount: '',
+    credit: false,
+    debit: false,
+    description: ''
+  }
+
+  const [formState, setFormState] = React.useState(initialFormState)
   const [showSuccess, setShowSuccess] = React.useState(false)
+  const [addTransaction] = useMutation(ADD_TRANSACTION)
 
   const handleChange = (e) => {
     e.persist()
     if (e.target.value === 'credit') {
-      setFormValues(formValues => ({
-        ...formValues,
+      setFormState(formState => ({
+        ...formState,
         credit: true,
         debit: false
       }))
     } else if (e.target.value === 'debit') {
-      setFormValues(formValues => ({
-        ...formValues,
+      setFormState(formState => ({
+        ...formState,
         debit: true,
         credit: false
       }))
     } else {
-      setFormValues(formValues => ({
-        ...formValues,
+      setFormState(formState => ({
+        ...formState,
         [e.target.name]: e.target.value
       }))
     }
+  }
+
+  const clearFormState = () => {
+    setFormState({ ...initialFormState })
   }
 
   return (
@@ -39,73 +48,69 @@ const TransactionForm = () => {
       {showSuccess &&
         <div>Transaction added</div>
       }
-      <Mutation mutation={ADD_TRANSACTION} onCompleted={() => setShowSuccess(true)}>
-        {(addTrasaction) => {
-          return (
-            <form onSubmit={e => {
-              e.preventDefault()
-              addTrasaction({
-                variables: {
-                  amount: parseFloat(formValues.amount),
-                  credit: !!formValues.credit,
-                  debit: !!formValues.debit,
-                  description: formValues.description
-                },
-                refetchQueries: [{
-                  query: TRANSACTIONS_QUERY
-                }]
-              })
-            }}>
-              <div css={TransactionFormCardRow}>
-                <label>
-                  Amount
-                  <input
-                    name='amount'
-                    onChange={handleChange}
-                    type='text'
-                    value={formValues.amount || ''}
-                  />
-                </label>
-              </div>
-              <div css={TransactionFormCardRow}>
-                <label id='radio'>
-                  Credit
-                  <input
-                    checked={formValues.credit}
-                    name='cardType'
-                    onChange={handleChange}
-                    type='radio'
-                    value='credit'
-                  />
-                </label>
-                <label id='radio'>
-                  Debit
-                  <input
-                    checked={formValues.debit}
-                    name='cardType'
-                    onChange={handleChange}
-                    type='radio' value='debit' />
-                </label>
-              </div>
-              <div css={TransactionFormCardRow}>
-                <label>
-                  Description
-                  <input
-                    name='description'
-                    onChange={handleChange}
-                    type='text'
-                    value={formValues.description || ''}
-                  />
-                </label>
-              </div>
-              <div css={ActionsRow}>
-                <Link to='/transactions'><Button delete>Go back</Button></Link>
-                <Button type='submit'>Add</Button>
-              </div>
-            </form>
-          )
-        }}
-      </Mutation>
+      <form onSubmit={e => {
+        e.preventDefault()
+        addTransaction({
+          variables: {
+            amount: parseFloat(formState.amount),
+            credit: !!formState.credit,
+            debit: !!formState.debit,
+            description: formState.description
+          },
+          refetchQueries: [{
+            query: TRANSACTIONS_QUERY
+          }]
+        })
+        setShowSuccess(true)
+        clearFormState()
+      }}>
+        <div css={TransactionFormCardRow}>
+          <label>
+            Amount
+            <input
+              name='amount'
+              onChange={handleChange}
+              type='text'
+              value={formState.amount || ''}
+            />
+          </label>
+        </div>
+        <div css={TransactionFormCardRow}>
+          <label id='radio'>
+            Credit
+            <input
+              checked={formState.credit}
+              name='cardType'
+              onChange={handleChange}
+              type='radio'
+              value='credit'
+            />
+          </label>
+          <label id='radio'>
+            Debit
+            <input
+              checked={formState.debit}
+              name='cardType'
+              onChange={handleChange}
+              type='radio' value='debit' />
+          </label>
+        </div>
+        <div css={TransactionFormCardRow}>
+          <label>
+            Description
+            <input
+              name='description'
+              onChange={handleChange}
+              type='text'
+              value={formState.description || ''}
+            />
+          </label>
+        </div>
+        <div css={ActionsRow}>
+          <Link to='/transactions'><Button delete>Go back</Button></Link>
+          <Button type='submit'>Add</Button>
+        </div>
+      </form>
     </div>
   )
 }
@@ -135,29 +140,6 @@ const ActionsRow = css`
 
   & a {
     margin-right: 24px;
-  }
-`
-
-const ADD_TRANSACTION = gql`
-  mutation AddTransaction(
-    $amount: Float!
-    $credit: Boolean!
-    $debit: Boolean!
-    $description: String!
-  ) {
-    addTransaction(
-      amount: $amount
-      credit: $credit
-      debit: $debit
-      description: $description
-    ) {
-        id      
-        amount
-        credit
-        debit
-        description
-      }
-
   }
 `
 
