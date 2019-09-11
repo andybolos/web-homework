@@ -1,1 +1,2 @@
-export { default } from 'Transactions'
+export { default as TransactionForm } from './TransactionForm'
+export { default } from './TransactionsView'

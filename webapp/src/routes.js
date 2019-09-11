@@ -2,7 +2,8 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import { css } from '@emotion/core'
 import { Home } from './home'
-import Transactions from './transactions/transactions'
+import TransactionsView from './Transactions'
+import TransactionsForm from './Transactions/TransactionForm'
 
 function AppRouter () {
   return (
@@ -20,7 +21,8 @@ function AppRouter () {
         </nav>
         <div className='main-content' css={contentStyle}>
           <Route component={Home} exact path='/' />
-          <Route component={Transactions} exact path='/transactions' />
+          <Route component={TransactionsView} exact path='/transactions' />
+          <Route component={TransactionsForm} exact path='/transaction-form' />
         </div>
       </div>
     </Router>
