@@ -42,7 +42,7 @@ const TransactionForm = (props) => {
     }
   })
   const [queryEditTransaction, { called, data }] = useLazyQuery(EDIT_TRANSACTIONS_QUERY, {
-    variables: { id: transactionId } // eslint-disable-line
+    variables: { id: transactionId }
   })
 
   React.useEffect(() => {
