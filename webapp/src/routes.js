@@ -22,7 +22,8 @@ function AppRouter () {
         <div className='main-content' css={contentStyle}>
           <Route component={Home} exact path='/' />
           <Route component={TransactionsView} exact path='/transactions' />
-          <Route component={TransactionsForm} exact path='/transaction-form' />
+          <Route component={TransactionsForm} exact path='/transaction/new' />
+          <Route component={TransactionsForm} path='/transaction/edit/:id' />
         </div>
       </div>
     </Router>

@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { useMutation } from '@apollo/react-hooks'
+import { Link } from 'react-router-dom'
 import { css } from '@emotion/core'
 import { Button } from '../utilities/BaseStyles'
 import { REMOVE_TRANSACTION, TRANSACTIONS_QUERY } from '../utilities/queries'
@@ -31,7 +32,8 @@ const TransactionCard = (transaction) => {
         <div css={TransactionCardLabel}>Description</div>
         {description}
       </div>
-      <div>
+      <div css={ActionStyles}>
+        <Link to={`/transaction/edit/${id}`}><Button>Edit</Button></Link>
         <Button delete onClick={() =>
           removeTransaction({
             variables: {
@@ -69,6 +71,12 @@ const TransactionCardLabel = css`
   color: #b5b5b5;
   font-size: 10px; 
   padding-bottom: 4px;
+`
+
+const ActionStyles = css`
+  & Button {
+    margin-left: 16px;
+  }
 `
 
 export default Transactions

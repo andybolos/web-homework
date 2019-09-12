@@ -18,7 +18,7 @@ const TransactionView = () => {
     <div css={ViewStyles}>
       <div css={TransactionViewHeader}>
         <h1>Transactions</h1>
-        <Link to='/transaction-form'><Button>Add Transaction</Button></Link>
+        <Link to='/transaction/new'><Button>Add Transaction</Button></Link>
       </div>
       { data && data.transactions.length
         ? <Transactions transactions={data.transactions} />
