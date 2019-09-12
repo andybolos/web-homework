@@ -28,7 +28,7 @@ const TransactionCard = (transaction) => {
         {credit ? 'Credit' : 'Debit' }
       </div>
       <div css={TransactionCardItem}>
-        <div css={TransactionCardLabel}>Card type</div>
+        <div css={TransactionCardLabel}>Description</div>
         {description}
       </div>
       <div>
@@ -47,10 +47,10 @@ const TransactionCard = (transaction) => {
 }
 
 const TransactionCardStyle = css`
-  height: 50px;
+  min-height: 50px;
   border: 1px solid #b5b5b5;
   margin-bottom: 4px;
-  padding: 4px 16px;
+  padding: 8px 16px;
   border-radius 4px;
   display: flex;
   justify-content: space-between;
@@ -61,6 +61,8 @@ const TransactionCardItem = css`
   display: flex;
   flex: 1;
   flex-direction: column;
+  margin-left: 8px;
+  margin-right: 8px;
 `
 
 const TransactionCardLabel = css`
