@@ -24,7 +24,6 @@ const TransactionView = () => {
         ? <Transactions transactions={data.transactions} />
         : <h5>No transactions, Please add some transactions</h5>
       }
-      <h2>Render a graph or something here</h2>
       <TransactionsChart transactions={data.transactions} />
     </div>
   )
